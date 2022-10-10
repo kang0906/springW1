@@ -40,7 +40,7 @@ public class ContentService {
     }
 
     @Transactional
-    public Content getContent(Long id) {
+    public Content getContent(Long id) {    // 게시글 조회
         return contentRepository.findById(id).get();
     }
 
@@ -52,7 +52,7 @@ public class ContentService {
 
 
     @Transactional
-    public Map<String, Object> updateMemo(Long id, ContentChangeDto changeDto) {
+    public Map<String, Object> updateContent(Long id, ContentChangeDto changeDto) { //게시글 수정
         Content content = contentRepository.findById(id).get();
         Map<String, Object> map = new LinkedHashMap<>();
 

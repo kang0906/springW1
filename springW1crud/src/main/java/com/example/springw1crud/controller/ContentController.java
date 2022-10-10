@@ -8,6 +8,7 @@ import com.example.springw1crud.repository.ContentRepository;
 import com.example.springw1crud.service.ContentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,6 +46,7 @@ public class ContentController {
 //        return mv;
 //    }
     @PostMapping("/content")    //게시글 작성 controller service 분리
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Map<String, Object> createContent(@RequestBody ContentRequestDto requestDto){
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("success",true);
@@ -70,7 +72,7 @@ public class ContentController {
 //        return map;
 //    }
 
-    @GetMapping("/content")   //전체 게시글 조회
+    @GetMapping("/contents")   //전체 게시글 조회
     public Map<String, Object> getContents() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("success",true);
@@ -100,6 +102,7 @@ public class ContentController {
 //    }
 
     @DeleteMapping("/content/{id}") //게시글 삭제
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Long deleteMemo(@PathVariable Long id) {
         contentService.deleteMemo(id);
         return id;
@@ -125,8 +128,9 @@ public class ContentController {
 //    }
 
     @PutMapping("/content/{id}")    //게시글 수정
-    public Map<String, Object> updateMemo(@PathVariable Long id, @RequestBody ContentChangeDto changeDto) {
-        return contentService.updateMemo(id, changeDto);
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public Map<String, Object> updateContent(@PathVariable Long id, @RequestBody ContentChangeDto changeDto) {
+        return contentService.updateContent(id, changeDto);
     }
 
 //    @PostMapping("/password")   // 비밀번호 확인
@@ -147,6 +151,7 @@ public class ContentController {
 //        }
 //    }
     @PostMapping("/password")   // 비밀번호 확인
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Map<String, Object> checkPassword(@RequestBody CheckPasswordDto passwordDto){
         Map<String, Object> map = new LinkedHashMap<>();
         if(contentService.checkPassword(passwordDto)){
