@@ -6,6 +6,8 @@ import com.example.springw1crud.dto.ContentRequestDto;
 import com.example.springw1crud.entity.Content;
 import com.example.springw1crud.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,8 @@ public class ContentService {
     @Transactional
     public Content createContent(ContentRequestDto requestDto){ // 게시글 작성
         Content content = new Content(requestDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        requestDto.setName(authentication.getName());
         return contentRepository.save(content);
     }
 
@@ -45,7 +49,14 @@ public class ContentService {
     }
 
     @Transactional
-    public Long deleteMemo(Long id) {   // 게시글 삭제
+    public Long deleteMemo(Long id) {   // 게시글 삭제 todo ** 글과 댓글이 함께 삭제되게 하기 **
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Content content = contentRepository.getReferenceById(id);
+
+        if(!content.getName().equals(authentication.getName())){
+            throw new IllegalArgumentException();
+        }
+        // todo - ** 글과 댓글이 함께 삭제되게 하기 ** -
         contentRepository.deleteById(id);
         return id;
     }
@@ -55,8 +66,10 @@ public class ContentService {
     public Map<String, Object> updateContent(Long id, ContentChangeDto changeDto) { //게시글 수정
         Content content = contentRepository.findById(id).get();
         Map<String, Object> map = new LinkedHashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        changeDto.setName(authentication.getName());
 
-        if(content.getPassword().equals(changeDto.getRequestPassword())){
+        if(content.getName().equals(authentication.getName())){
             ContentRequestDto requestDto = new ContentRequestDto(changeDto);
             this.update(id, requestDto);
             map.put("success", true);
@@ -65,14 +78,19 @@ public class ContentService {
         }else{
             map.put("success", false);
             map.put("data", contentRepository.findById(id).get());
-            map.put("error","비밀번호가 다릅니다.");
+            map.put("error","게시글 작성자만 수정할수있습니다.");
         }
         return map;
     }
 
-    public boolean checkPassword(CheckPasswordDto passwordDto){
-        Content content = contentRepository.findById(passwordDto.getId()).get();
-//        log.info("save : {} / input : {}",content.getPassword(),passwordDto.getPassword());
-        return content.getPassword().equals(passwordDto.getPassword());
+    @Transactional
+    public boolean createComment(){
+        return true;
     }
+
+//    public boolean checkPassword(CheckPasswordDto passwordDto){
+//        Content content = contentRepository.findById(passwordDto.getId()).get();
+////        log.info("save : {} / input : {}",content.getPassword(),passwordDto.getPassword());
+//        return content.getPassword().equals(passwordDto.getPassword());
+//    }
 }

@@ -25,10 +25,10 @@ public class Content extends Timestamped{
     @Column(nullable = false)
     String name;
 
-    @Column(nullable = false)
-    @JsonIgnore
-//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    String password;
+//    @Column(nullable = false)
+//    @JsonIgnore
+////    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    String password;
 
     @Column(nullable = false)
     String content;
@@ -54,13 +54,13 @@ public class Content extends Timestamped{
         this.content = requestDto.getContent();
         this.name = requestDto.getName();
         this.title = requestDto.getTitle();
-        this.password = requestDto.getPassword();
+//        this.password = requestDto.getPassword();
     }
 
     public void update(ContentRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.name = requestDto.getName();
-        this.password = requestDto.getPassword();
+//        this.password = requestDto.getPassword();
         this.content = requestDto.getContent();
     }
 }

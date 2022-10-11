@@ -9,6 +9,8 @@ import com.example.springw1crud.service.ContentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,14 +51,17 @@ public class ContentController {
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Map<String, Object> createContent(@RequestBody ContentRequestDto requestDto){
         Map<String, Object> map = new LinkedHashMap<>();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("게시글등록 유저 : {}",authentication.getName());
+        requestDto.setName(authentication.getName());
         map.put("success",true);
         map.put("data",contentService.createContent(requestDto));
         map.put("error",null);
 
+
         return map;
     }
-
-
 
 //    @GetMapping("/content")   //전체 게시글 조회
 //    public List<Content> getContents() {
@@ -91,7 +96,6 @@ public class ContentController {
     @GetMapping("/content/{id}")   //게시글 조회
     public Content getContent(@PathVariable Long id) {
         Content content = contentRepository.findById(id).get();
-        log.info("password : {}",content.getPassword());
         return contentService.getContent(id);
     }
 
@@ -150,20 +154,20 @@ public class ContentController {
 //            return map;
 //        }
 //    }
-    @PostMapping("/password")   // 비밀번호 확인
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Map<String, Object> checkPassword(@RequestBody CheckPasswordDto passwordDto){
-        Map<String, Object> map = new LinkedHashMap<>();
-        if(contentService.checkPassword(passwordDto)){
-            map.put("success",true);
-            map.put("data",true);
-            map.put("error",null);
-            return map;
-        }else{
-            map.put("success",true);
-            map.put("data",false);
-            map.put("error",null);
-            return map;
-        }
-    }
+//    @PostMapping("/password")   // 비밀번호 확인
+//    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+//    public Map<String, Object> checkPassword(@RequestBody CheckPasswordDto passwordDto){
+//        Map<String, Object> map = new LinkedHashMap<>();
+//        if(contentService.checkPassword(passwordDto)){
+//            map.put("success",true);
+//            map.put("data",true);
+//            map.put("error",null);
+//            return map;
+//        }else{
+//            map.put("success",true);
+//            map.put("data",false);
+//            map.put("error",null);
+//            return map;
+//        }
+//    }
 }

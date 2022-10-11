@@ -25,6 +25,11 @@ public class UserDto {
    @Size(min = 4, max = 32)
    private String password;
 
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   @NotNull
+   @Size(min = 4, max = 32)
+   private String passwordRepeat;
+
    @NotNull
    @Size(min = 4, max = 12)
    private String nickname;

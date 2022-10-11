@@ -2,6 +2,7 @@ package com.example.springw1crud.service;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import com.example.springw1crud.dto.UserDto;
 import com.example.springw1crud.entity.Authority;
@@ -28,6 +29,15 @@ public class UserService {
     public UserDto signup(UserDto userDto) {
         if (userRepository.findOneWithAuthoritiesByUsername(userDto.getUsername()).orElse(null) != null) {
             throw new DuplicateMemberException("이미 가입되어 있는 유저입니다.");
+        }
+        if(!Pattern.matches("^[a-zA-Z0-9]*$", userDto.getUsername())){
+            throw new RuntimeException("아이디 형식이 올바르지 않습니다.");
+        }
+        if(!Pattern.matches("^[a-z0-9]*$",userDto.getPassword())){
+            throw new RuntimeException("비밀번호 형식이 올바르지 않습니다.");
+        }
+        if(!userDto.getPassword().equals(userDto.getPasswordRepeat())){
+            throw new RuntimeException("비밀번호 확인이 일치하지 않습니다.");
         }
 
         Authority authority = Authority.builder()
