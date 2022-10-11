@@ -3,7 +3,9 @@ package com.example.springw1crud.service;
 import com.example.springw1crud.dto.CheckPasswordDto;
 import com.example.springw1crud.dto.ContentChangeDto;
 import com.example.springw1crud.dto.ContentRequestDto;
+import com.example.springw1crud.entity.Comment;
 import com.example.springw1crud.entity.Content;
+import com.example.springw1crud.repository.CommentRepository;
 import com.example.springw1crud.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,7 @@ import java.util.Map;
 @Service
 public class ContentService {
     private final ContentRepository contentRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public Long update(Long id, ContentRequestDto requestDto) {
@@ -49,14 +52,19 @@ public class ContentService {
     }
 
     @Transactional
-    public Long deleteMemo(Long id) {   // 게시글 삭제 todo ** 글과 댓글이 함께 삭제되게 하기 **
+    public Long deleteMemo(Long id) {   // 게시글 삭제
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Content content = contentRepository.getReferenceById(id);
 
         if(!content.getName().equals(authentication.getName())){
             throw new IllegalArgumentException();
         }
-        // todo - ** 글과 댓글이 함께 삭제되게 하기 ** -
+
+        List<Comment> comments = content.getComments();
+        for (Comment comment : comments) {  // ** 글과 댓글이 함께 삭제되게 하기 ** -
+            commentRepository.deleteById(comment.getId());
+        }
+
         contentRepository.deleteById(id);
         return id;
     }

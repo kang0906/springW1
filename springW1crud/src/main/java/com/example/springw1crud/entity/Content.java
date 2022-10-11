@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor // 기본생성자를 만듭니다.
 @Getter
@@ -32,6 +34,9 @@ public class Content extends Timestamped{
 
     @Column(nullable = false)
     String content;
+
+    @OneToMany(mappedBy = "content")
+    List<Comment> Comments = new ArrayList<>();
 
 //    public Content(String title, String name, String content){
 //
@@ -63,4 +68,8 @@ public class Content extends Timestamped{
 //        this.password = requestDto.getPassword();
         this.content = requestDto.getContent();
     }
+
+//    public void addComment(String Comment){
+//        Comments.add(new Comment(Comment));
+//    }
 }

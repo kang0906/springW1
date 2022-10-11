@@ -95,7 +95,9 @@ public class ContentController {
 
     @GetMapping("/content/{id}")   //게시글 조회
     public Content getContent(@PathVariable Long id) {
-        Content content = contentRepository.findById(id).get();
+//        Content content = contentRepository.findById(id).get();
+        Content con = contentService.getContent(id);
+//        log.info("content 객체 = {}",con);
         return contentService.getContent(id);
     }
 
