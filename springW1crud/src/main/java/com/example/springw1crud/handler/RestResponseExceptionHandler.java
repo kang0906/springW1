@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import com.example.springw1crud.dto.ErrorDto;
+import com.example.springw1crud.exception.CustomUserSignupException;
 import com.example.springw1crud.exception.DuplicateMemberException;
 import com.example.springw1crud.exception.NotFoundMemberException;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,5 +30,12 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseBody
     protected ErrorDto forbidden(RuntimeException ex, WebRequest request) {
         return new ErrorDto(FORBIDDEN.value(), ex.getMessage());
+    }
+
+    @ResponseStatus(CONFLICT)
+    @ExceptionHandler(value = { CustomUserSignupException.class})
+    @ResponseBody
+    protected ErrorDto userSignup(RuntimeException ex, WebRequest request) {
+        return new ErrorDto(CONFLICT.value(), ex.getMessage());
     }
 }
